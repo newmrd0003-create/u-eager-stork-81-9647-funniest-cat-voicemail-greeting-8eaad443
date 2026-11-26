@@ -7,8 +7,8 @@ $MAKEFUN_OUTPUT_DIR/entry.txt (fallback /output).
 import os
 
 ENTRY = (
-    "Hi, you've reached Mr. Whiskers. I'm napping on your keyboard. "
-    "Leave a message after the meow. I'll ignore it."
+    "You've reached Mr. Whiskers. I'm napping on your keyboard. "
+    "Leave a message after the meow. I'll knock it off the table."
 )
 
 MAX_CHARS = 120
@@ -35,6 +35,14 @@ def validate(entry: str):
         errors.append("entry contains non-ASCII characters")
     if entry != entry.strip():
         errors.append("entry has leading/trailing whitespace")
+    # Brief checks: a cat voicemail must name a cat cue and end like a
+    # spoken greeting (terminal punctuation), so a generic voicemail
+    # line cannot slip through as a valid entry.
+    cat_cues = ("meow", "whiskers", "paw", "purr", "cat", "kitty", "nap")
+    if not any(cue in entry.lower() for cue in cat_cues):
+        errors.append("entry has no cat cue (meow/whiskers/paw/purr/cat/kitty/nap)")
+    if entry and entry[-1] not in ".!?":
+        errors.append("entry must end with terminal punctuation (. ! ?)")
     return (not errors), errors
 
 
